@@ -1,0 +1,21 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>DashWorld connection test</title>
+<style>body{font:16px system-ui,sans-serif;max-width:640px;margin:24px auto;padding:0 16px}p{margin:10px 0;padding:10px;border-radius:8px;background:#eee}.ok{background:#d7f5d7}.bad{background:#ffd9d9}</style></head><body>
+<h2>DashWorld connection test</h2><div id="out"></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script>
+const URL_="https://reaxsdbwfbaetdxkazpx.supabase.co",KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJlYXhzZGJ3ZmJhZXRkeGthenB4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQxMTY3MTMsImV4cCI6MjEwOTY5MjcxM30.c73JiPGtFEV4u9_Mm8w-fe76bOAe5HZTNoMwRMrV5hM",out=document.getElementById('out');
+const log=(ok,t)=>{const p=document.createElement('p');p.className=ok?'ok':'bad';p.textContent=(ok?'OK: ':'PROBLEM: ')+t;out.append(p)};
+(async()=>{
+if(!window.supabase){log(false,'The Supabase library did not load. Something is blocking cdn.jsdelivr.net (ad blocker, school or work network, or no internet).');return}
+log(true,'Supabase library loaded.');
+const sb=supabase.createClient(URL_,KEY);
+try{const {data,error}=await sb.from('docs').select('col,id').limit(5);
+ if(error)log(false,'Database says: '+error.message+' (If it mentions the table docs, run supabase-setup.sql again in the SQL Editor.)');
+ else log(true,'Database table found. Rows so far: '+data.length)}catch(e){log(false,'Could not reach Supabase: '+e.message)}
+try{const t=await sb.from('docs').upsert({col:'admin',id:'connection-test',data:{t:Date.now()}});
+ if(t.error)log(false,'Writing failed: '+t.error.message);else log(true,'Writing to the database works.')}catch(e){log(false,'Write error: '+e.message)}
+const ch=sb.channel('test-room');let done=false;
+setTimeout(()=>{if(!done)log(false,'Realtime (live multiplayer) did not connect in 8 seconds. Some networks block websockets. Try a phone hotspot.')},8000);
+ch.subscribe(s=>{if(s==='SUBSCRIBED'&&!done){done=true;log(true,'Realtime (live multiplayer) connected. Everything works!')}else if((s==='CHANNEL_ERROR'||s==='TIMED_OUT')&&!done){done=true;log(false,'Realtime failed: '+s)}});
+})();
+</script></body></html>
