@@ -1,10 +1,28 @@
 # DashWorld
 
-A Roblox-style browser game platform: accounts, 3D obbies, a tycoon game, a Studio to build and publish games, Lua scripting, an avatar maker, friends and servers.
+A Roblox-style browser game platform.
+
+Play, build, and hang out with friends — all in the browser.
+
+## Features
+
+- Accounts, friends, and display names
+- 3D obbies, tycoons, and community games
+- Full Studio to build and publish games
+- Templates (Void, Obby, Baseplate)
+- Public Models — upload builds and use other people’s models
+- Avatar maker, shop, UGC items
+- Lua scripting
+- Multiplayer servers (when online)
 
 ## Run it
-Open `index.html` in a browser, or host it on GitHub Pages.
+
+Open `index.html` in a browser, or host the folder on GitHub Pages.
+
+No install or build step needed.
 
 ## Notes
-- Without the Claude artifact runtime, accounts and games are saved only in the visitor's own browser (solo mode).
-- Real shared servers and friends need a backend (for example Firebase or Supabase plus a WebSocket server).
+
+- Online features (accounts, shared games, public models) use Supabase.
+- If online publish fails, check your Supabase RLS policies and allow writes for the anon key.
+- Without online access everything still works in local/solo mode (saved in the browser).
